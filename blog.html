@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ทำงาน Event มา 20 ปี — EventLab109 Blog</title>
+<meta name="description" content="ทำงาน Event มา 20 ปี ผมได้เรียนรู้ว่าแต่ละงานต้องทำไม่เหมือนกัน — EventLab109">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,700;0,800;1,700;1,800;1,900&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF8F2; --surface:#FFFFFF; --surface-2:#F3EEE4;
+  --ink:#141414; --body:#2B2B2B; --muted:#666; --line:#E6DFD2;
+  --pink:#E0177A; --pink-soft:#FFE1EF; --green:#2E8F33; --green-soft:#E0F2DC; --shadow:#141414;
+  --ease:cubic-bezier(.2,.9,.25,1.15);
+}
+:root[data-theme="dark"]{
+  --bg:#111411; --surface:#1B201B; --surface-2:#232A23;
+  --ink:#F5F3EE; --body:#DCDFD8; --muted:#A8B0A5; --line:#2E372E;
+  --pink:#FF4F9E; --pink-soft:#3B1528; --green:#52C458; --green-soft:#183A1C; --shadow:#000;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Kanit',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;transition:background-color .4s,color .4s}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+/* reading progress */
+.progress{position:fixed;top:0;left:0;height:4px;width:100%;background:var(--pink);transform-origin:left;transform:scaleX(0);z-index:50}
+
+/* header (same as the site) */
+header{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:var(--bg);border-bottom:2px solid var(--line)}
+.wm{display:inline-flex;align-items:baseline;font-size:24px;line-height:1;transform:skewX(-6deg)}
+.wm b,.wm i{font-style:italic;font-weight:900}.wm i{color:var(--pink)}
+.wm .n{font-style:italic;font-weight:900;margin-left:4px;padding:2px 7px 3px;background:var(--green);color:#fff;border-radius:6px;font-size:17px;transform:translateY(-2px)}
+.nav{display:flex;gap:4px;align-items:center}
+.nav a{font-size:15px;font-weight:500;padding:8px 14px;border-radius:99px;transition:background-color .2s}
+.nav a:hover{background:var(--surface-2)}
+.nav a.on{background:var(--ink);color:var(--bg)}
+.toggle{width:64px;height:34px;border-radius:99px;background:var(--surface);border:2px solid var(--ink);position:relative;box-shadow:3px 3px 0 var(--shadow);margin-left:8px}
+.knob{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--green);display:grid;place-items:center;transition:transform .45s var(--ease)}
+.knob svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+:root[data-theme="dark"] .knob{transform:translateX(30px);background:var(--pink)}
+.moon{display:none}:root[data-theme="dark"] .sun{display:none}:root[data-theme="dark"] .moon{display:block}
+
+/* hero */
+.hero{max-width:1000px;margin:0 auto;padding:110px 20px 10px;display:grid;grid-template-columns:1fr 220px;gap:30px;align-items:end}
+.kicker{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:6px;background:var(--ink);color:var(--bg);font-size:12px;letter-spacing:.16em;font-weight:500;transform:skewX(-8deg)}
+.kicker i{width:7px;height:7px;border-radius:50%;background:var(--pink)}
+h1{font-size:clamp(30px,4.6vw,52px);font-weight:800;line-height:1.2;margin:16px 0 14px}
+h1 em{font-style:italic;color:var(--pink)}
+.meta{display:flex;gap:14px;flex-wrap:wrap;font-size:14.5px;color:var(--muted)}
+.meta span{display:inline-flex;align-items:center;gap:6px}
+.meta .d{width:5px;height:5px;border-radius:50%;background:var(--line)}
+/* "20 years" badge */
+.years{position:relative;aspect-ratio:1;border:3px solid var(--ink);border-radius:28px;background:var(--pink);color:#fff;box-shadow:8px 8px 0 var(--green);display:grid;place-items:center;text-align:center;overflow:hidden;transform:rotate(-3deg)}
+.years::before{content:"";position:absolute;left:-20%;right:-20%;bottom:16%;height:20%;background:var(--green);transform:rotate(-10deg)}
+.years::after{content:"";position:absolute;left:-20%;right:-20%;bottom:6%;height:7%;background:var(--ink);transform:rotate(-10deg)}
+.years b{position:relative;z-index:1;display:block;font-size:96px;font-weight:900;font-style:italic;line-height:.9;letter-spacing:-.04em}
+.years small{position:relative;z-index:1;display:block;font-size:14px;font-weight:700;font-style:italic;letter-spacing:.14em;margin-top:6px}
+.years .wrap{position:relative;z-index:1;transform:translateY(-14px)}
+
+/* article */
+article{max-width:720px;margin:0 auto;padding:30px 20px 20px}
+article p{font-family:'Sarabun','Kanit',sans-serif;font-size:19px;line-height:1.85;color:var(--body);margin:0 0 22px}
+article p.lead{font-size:21px;color:var(--ink)}
+article h2{font-size:clamp(22px,2.6vw,28px);font-weight:700;line-height:1.35;margin:46px 0 16px;padding-left:16px;position:relative}
+article h2::before{content:"";position:absolute;left:0;top:.2em;bottom:.2em;width:6px;border-radius:3px;background:var(--pink)}
+article h2:nth-of-type(even)::before{background:var(--green)}
+blockquote{margin:30px 0;padding:22px 26px;border:3px solid var(--ink);border-radius:22px;background:var(--surface);box-shadow:6px 6px 0 var(--pink);font-size:clamp(22px,2.8vw,28px);font-weight:700;font-style:italic;line-height:1.4}
+blockquote::before{content:"“";display:block;font-size:64px;line-height:.6;color:var(--pink);margin-bottom:6px}
+.callout{margin:26px 0;padding:18px 22px;border-radius:18px;background:var(--green-soft);font-size:19px;font-weight:500;line-height:1.7}
+.callout b{color:var(--green)}
+
+/* closing CTA */
+.cta{max-width:720px;margin:20px auto 0;padding:0 20px}
+.cta-box{position:relative;overflow:hidden;background:var(--ink);color:var(--bg);border-radius:26px;padding:32px}
+.cta-box h3{position:relative;font-size:clamp(24px,3vw,32px);font-weight:800;font-style:italic;line-height:1.25}
+.cta-box h3 em{color:var(--pink);font-style:italic}
+.cta-box p{position:relative;margin-top:10px;opacity:.82;font-size:16.5px;line-height:1.7;max-width:460px}
+.cta-box .s1{position:absolute;right:-50px;bottom:-30px;width:240px;height:70px;background:var(--pink);transform:rotate(-10deg)}
+.cta-box .s2{position:absolute;right:-30px;bottom:40px;width:180px;height:40px;background:var(--green);transform:rotate(-10deg)}
+.btns{position:relative;display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:99px;font-weight:500;font-size:15.5px;border:2px solid var(--bg);transition:transform .2s,background-color .2s,color .2s}
+.btn:hover{transform:translateY(-3px)}
+.btn.primary{background:var(--pink);border-color:var(--pink);color:#fff}
+.btn.ghost{color:var(--bg)}.btn.ghost:hover{background:var(--bg);color:var(--ink)}
+.btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.back{display:block;max-width:720px;margin:28px auto 0;padding:0 20px;font-size:15px;color:var(--muted)}
+.back a{border-bottom:2px solid var(--line)}.back a:hover{color:var(--pink);border-color:var(--pink)}
+footer{text-align:center;padding:40px 16px;font-size:13.5px;color:var(--muted)}
+footer b{color:var(--ink)}
+
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s var(--ease)}
+.rv.in{opacity:1;transform:none}
+
+@media (max-width:820px){
+  header{padding:10px 14px}
+  header{padding:10px 12px}
+  .wm{font-size:19px}.wm .n{font-size:13px}
+  .nav a{font-size:13px;padding:6px 7px}
+  .toggle{width:54px;height:30px;margin-left:4px}.knob{width:20px;height:20px}
+  :root[data-theme="dark"] .knob{transform:translateX(24px)}
+  .hero{grid-template-columns:1fr;padding-top:90px;gap:18px}
+  .years{width:150px;order:-1;transform:rotate(-3deg)}
+  .years b{font-size:66px}.years small{font-size:11px}
+  article p{font-size:17.5px}article p.lead{font-size:19px}
+  .cta-box{padding:24px}
+}
+@media (max-width:380px){.nav a{padding:6px 6px}.wm .n{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header>
+  <a class="wm home" href="index.html" aria-label="EventLab109 หน้าแรก"><b>Event</b><i>Lab</i><span class="n">109</span></a>
+  <nav class="nav">
+    <a class="on" href="blog.html">Blog</a>
+    <a class="home" data-hash="#services" href="index.html#services">Service</a>
+    <a class="home" data-hash="#contact" href="index.html#contact">Contact</a>
+    <button class="toggle" id="themeBtn" aria-label="สลับโหมดสว่าง/มืด"><span class="knob">
+      <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span></button>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <span class="kicker"><i></i>EVENTLAB109 BLOG</span>
+      <h1>ทำงาน Event มา <em>20 ปี</em><br>ผมได้เรียนรู้ว่าแต่ละงานต้องทำไม่เหมือนกัน</h1>
+      <div class="meta"><span>EventLab109</span><span class="d"></span><span>อ่านราว 4 นาที</span></div>
+    </div>
+    <div class="years" aria-hidden="true"><div class="wrap"><b>20</b><small>YEARS IN EVENTS</small></div></div>
+  </section>
+
+  <article>
+    <p class="lead rv">ผมทำงานในวงการ Event มา 20 ปี เจอมาหมดแล้วทั้งงานเล็กและงานใหญ่ บางงานมีเวลาเตรียมหลายเดือน บางงานลูกค้าโทรมาวันนี้ แล้วอีกไม่กี่วันต้องใช้จริง</p>
+    <p class="rv">ผมอยู่กับงานตั้งแต่ช่วงเตรียม ประสานกับทีมต่าง ๆ จนถึงยืนคุมหน้างาน สิ่งที่ผมได้เรียนรู้คือไอเดียดีอย่างเดียวไม่พอ ต้องทำให้มันเกิดขึ้นจริงได้ด้วยเวลาและงบที่งานนั้นมีอยู่</p>
+    <p class="rv">หลายงานที่ผมรับมา เริ่มจากประโยคเดียวว่า</p>
+    <blockquote class="rv">มีไอเดียแบบนี้ ทำได้ไหม?</blockquote>
+    <p class="rv">จากที่คุยงานมาทั้งหมด ถ้างบและเวลาพอ ส่วนใหญ่ทำได้ครับ อาจไม่เป๊ะ 100% แต่ก็หาวิธีที่ใกล้เคียงมาแทนได้ น้อยมากที่จะบอกว่าทำไม่ได้เลย</p>
+
+    <h2 class="rv">แต่... คนทำ Event กับคนทำระบบ มองงานเดียวกันไม่เหมือนกัน</h2>
+    <p class="rv">สมมติลูกค้าอยากได้เกม Interactive ไว้ในบูธ ให้คนเข้ามาเล่นจบในไม่กี่นาที รับของรางวัล แล้วจำแบรนด์กลับไปได้ เกมใช้แค่สองสามวัน และมีเวลาเตรียมไม่มาก</p>
+    <p class="rv">ถ้าเอาโจทย์นี้ไปคุยกับทีมพัฒนาทั่วไป เขาจะเริ่มถามเรื่องเก็บ requirement ออกแบบระบบ เขียนโค้ด เทส แก้บั๊ก เพราะคนทำซอฟต์แวร์คุ้นกับระบบที่ต้องใช้ยาว ๆ ต้องดูแลต่อได้และขยายได้ ซึ่งก็ถูกต้องตามหลักการ</p>
+    <p class="rv">แต่ในฐานะคนทำ Event ผมรู้ว่าสิ่งที่ลูกค้าอยากได้คือของที่ใช้ได้กับงานนี้ ทันวันจริง และไม่เกินงบ</p>
+    <p class="rv">สองฝั่งไม่มีใครผิด แค่วัดความสำเร็จกันคนละแบบ ผมเห็นมาหลายครั้งว่าถ้าไม่คุยเรื่องนี้ให้ตรงกันตั้งแต่แรก งานที่ดูง่าย ๆ ก็บานปลายทั้งเรื่องเวลาและงบได้</p>
+
+    <h2 class="rv">ใช้แค่ไม่กี่วันก็ต้องใส่ใจ แค่ต้องใส่ให้ถูกที่</h2>
+    <p class="rv">ประโยค "ก็แค่เกม ใช้แป๊บเดียวเอง" ผมได้ยินบ่อยมาก และผมเข้าใจ ผู้จัดงานไม่ได้อยากได้ซอฟต์แวร์ใหญ่โต เขาอยากได้อะไรสักอย่างที่ทำให้งานสนุกและได้ผล</p>
+    <p class="rv">หน้าที่ของผมคือช่วยแยกว่าอะไรต้องแน่น และอะไรตัดทิ้งได้</p>
+    <p class="rv">ยกตัวอย่างเกมที่ตั้งในบูธและมีสต๊าฟยืนดูอยู่ เกมแบบนี้ผมไม่ทำหลังบ้านซับซ้อน และไม่เผื่อฟีเจอร์ไว้สำหรับอนาคตที่ยังไม่มีใครวางแผน ตัดพวกนี้ออกแล้วผมเอาเวลาไปเก็บเรื่องที่คนเล่นเจอจริง เช่น เล่นแล้วเข้าใจทันทีไหม ภาพกับเสียงเข้ากับแบรนด์หรือเปล่า รันบนเครื่องจริงแล้วลื่นไหม</p>
+    <p class="rv">ส่วนที่กระทบวันงาน ผมยังเทสให้ครบ และเตรียมแผนสำรองไว้เผื่ออะไรพังเสมอ ระบบใช้แค่สามวันก็จริง แต่สามวันนั้นพลาดไม่ได้</p>
+    <div class="callout rv">พูดง่าย ๆ คือผม<b>ตัดความซับซ้อนที่งานนั้นไม่ได้ใช้</b> แล้วเอาเวลากับงบไปลงตรงที่มีผลจริง</div>
+
+    <h2 class="rv">ระบบอื่นผมก็คิดแบบเดียวกัน</h2>
+    <p class="rv">ระบบลงทะเบียน ระบบโหวต แบบสอบถาม หรือโปรแกรมเฉพาะงาน ผมใช้หลักเดียวกันหมด</p>
+    <p class="rv">ระบบลงทะเบียนของงานไม่กี่สิบคนกับงานหลายพันคนไม่ควรหน้าตาเหมือนกัน บางงานแค่ต้องเช็กชื่อให้เร็ว บางงานต้องแยกสิทธิ์เข้าโซน พิมพ์บัตร หรือส่งข้อมูลต่อให้ระบบอื่น จะตัดหรือเพิ่มอะไร ผมดูจากหน้างานจริง มีเรื่องเดียวที่ผมไม่ลดเลย คือข้อมูลต้องถูกต้อง และข้อมูลส่วนตัวของผู้เข้าร่วมต้องดูแลให้ดี</p>
+    <p class="rv">เวลาทำงานกับทีมสายอื่นก็เหมือนกัน แต่ละทีมมีขั้นตอนและข้อจำกัดของตัวเอง สิ่งที่ผมทำคือแปลโจทย์ฝั่ง Event ให้ทุกคนเข้าใจตรงกันว่าอะไรต้องได้แน่ ๆ อะไรยืดหยุ่นได้ และเวลาจริงเหลืออยู่เท่าไร</p>
+
+    <h2 class="rv">ผมเริ่มจากงานของคุณก่อน แล้วค่อยคุยเรื่องระบบ</h2>
+    <p class="rv">ก่อนจะคุยว่าใช้เทคโนโลยีอะไร ผมอยากรู้ก่อนว่าคุณอยากให้คนในงานทำอะไร ระบบต้องใช้กี่วัน คนเยอะแค่ไหน และติดข้อจำกัดอะไรอยู่บ้าง</p>
+    <p class="rv">บางโจทย์ผมต้องเขียนใหม่ทั้งหมด บางโจทย์เอาเครื่องมือที่มีอยู่มาปรับนิดหน่อยก็ได้ผลเท่ากัน</p>
+    <p class="rv">ทำมา 20 ปี ผมก็ยังไม่เชื่อว่ามีสูตรสำเร็จ สิ่งที่ผมได้มาคือรู้ว่าควรถามอะไร และควรใส่แรงตรงไหน</p>
+    <p class="rv">ถ้าคุณมีไอเดียอยู่แล้วแต่ยังไม่แน่ใจว่าจะทำออกมายังไง ทักมาคุยกับผมได้เลยครับ จะเป็นเกม Interactive ระบบลงทะเบียน หรือโปรแกรมเฉพาะสำหรับงานของคุณ ผมช่วยคิด ช่วยหาสิ่งที่ลงตัวกับสิ่งที่มี แล้วลงมือทำ</p>
+  </article>
+
+  <section class="cta rv">
+    <div class="cta-box"><div class="s1"></div><div class="s2"></div>
+      <h3>"มีไอเดียแบบนี้<br><em>ทำได้ไหม?"</em></h3>
+      <p>ถ้าตอนนี้คุณกำลังจะถามใครสักคนว่า "มีไอเดียแบบนี้ ทำได้ไหม?" ลองถามผมดูครับ ถ้าทำแบบที่คิดไว้ไม่ได้ ผมจะบอกตรง ๆ พร้อมทางเลือกที่ใกล้ที่สุดให้</p>
+      <div class="btns">
+        <a class="btn primary" href="tel:0827842828"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>082-784-2828</a>
+        <a class="btn ghost" href="mailto:eventlab109@gmail.com"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>eventlab109@gmail.com</a>
+      </div>
+    </div>
+  </section>
+  <p class="back"><a class="home" href="index.html">← กลับหน้าแรก</a></p>
+</main>
+<footer>© 2015 <b>EventLab109</b> · Interactive Event Technology</footer>
+
+<script>
+/* ลิงก์กลับหน้าแรก: เปิดจาก index-v2.html จะมี ?v=2 → กลับไป index-v2.html */
+const HOME = new URLSearchParams(location.search).get("v") === "2" ? "index-v2.html" : "index.html";
+document.querySelectorAll("a.home").forEach(a => a.href = HOME + (a.dataset.hash || ""));
+document.querySelector('.nav a.on').href = "blog.html" + location.search;
+
+const root = document.documentElement;
+try { const t = localStorage.getItem(HOME === "index.html" ? "el-theme" : "el109-theme"); if (t) root.dataset.theme = t; } catch(e){}
+document.getElementById("themeBtn").onclick = () => {
+  root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+  try { localStorage.setItem(HOME === "index.html" ? "el-theme" : "el109-theme", root.dataset.theme); } catch(e){}
+};
+const bar = document.getElementById("progress");
+addEventListener("scroll", () => {
+  const h = document.documentElement.scrollHeight - innerHeight;
+  bar.style.transform = `scaleX(${h > 0 ? Math.min(1, scrollY / h) : 0})`;
+}, { passive:true });
+const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } }), { threshold:.1 });
+document.querySelectorAll(".rv").forEach(el => io.observe(el));
+</script>
+<script type="module" src="counter.js" data-site="blog"></script>
+</body>
+</html>

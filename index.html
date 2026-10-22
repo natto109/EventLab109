@@ -255,7 +255,14 @@ addEventListener('scroll',()=>hdr.classList.toggle('scrolled',scrollY>20),{passi
 /* ===== Mobile layout ===== */
 @media (max-width:899px){
   header{padding:14px 16px}
-  .nav a.link{display:none}
+  .nav{gap:0}
+  .nav a.link{font-size:13px;padding:6px 7px}
+  .brand small{display:none}
+  .brand .mono{display:none}
+  header{padding-right:12px}
+  .brand{font-size:15px;gap:7px}
+  .toggle{width:54px;height:30px;margin-left:4px}.toggle .knob{width:20px;height:20px}
+  :root[data-theme="dark"] .toggle .knob{transform:translateX(24px)}
   .stage{width:100%!important;height:auto;transform:none!important;display:flex;flex-direction:column;align-items:center}
   .lines,.pulse,.ground{display:none}
   .rig{display:contents}
@@ -302,6 +309,7 @@ addEventListener('scroll',()=>hdr.classList.toggle('scrolled',scrollY>20),{passi
 <header>
   <a class="brand" href="#top"><span class="mono en">EL109</span><span>EventLab109<small class="en">INTERACTIVE EVENT TECH</small></span></a>
   <nav class="nav">
+    <a class="link en" href="blog.html">Blog</a>
     <a class="link en" href="#top">Service</a>
     <a class="link en" href="#contact">Contact</a>
     <button class="toggle" id="themeBtn" aria-label="สลับโหมดสว่าง/มืด">
@@ -474,6 +482,7 @@ function select(i){
   SERVICES.forEach((s, k) => { s.el.classList.toggle("active", k === i); s.line.classList.toggle("active", k === i); });
   cardLine.classList.toggle("active", i >= 0);
   const s = SERVICES[i];
+  try { window.elTrack && window.elTrack.service(i); } catch(e){}   // ตัวนับหลังบ้าน
   cardBody.classList.add("swap");
   setTimeout(() => {
     card.style.setProperty("--c", `var(--${s.c})`); card.style.setProperty("--c-soft", `var(--${s.c}-soft)`);
@@ -645,5 +654,6 @@ addEventListener("pointermove", e => {
   requestAnimationFrame(loop);
 })();
 </script>
+<script type="module" src="counter.js" data-site="v1"></script>
 </body>
 </html>
