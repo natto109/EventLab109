@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Gallery Editor — EventLab109</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,500;0,700;1,900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FBF8F2;--surface:#fff;--surface-2:#F3EEE4;--ink:#141414;--muted:#666;--line:#E6DFD2;--pink:#E0177A;--green:#2E8F33;--warn:#B85C00}
+@media (prefers-color-scheme:dark){:root{--bg:#111411;--surface:#1B201B;--surface-2:#232A23;--ink:#F5F3EE;--muted:#A8B0A5;--line:#2E372E;--pink:#FF4F9E;--green:#52C458;--warn:#F0A040}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Kanit',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit;color:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:22px 16px 60px}
+h1{font-size:26px;font-weight:700}h1 i{font-style:italic;font-weight:900;color:var(--pink)}
+.lead{color:var(--muted);margin:4px 0 18px;font-size:15px;line-height:1.6}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:99px;border:2px solid var(--ink);background:var(--surface);cursor:pointer;font-size:14.5px;font-weight:500}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn.pink{background:var(--pink);border-color:var(--pink);color:#fff}
+.btn.sm{padding:5px 11px;font-size:13px}
+.btn:disabled{opacity:.4;cursor:default}
+.cols{display:grid;grid-template-columns:1fr 1.1fr;gap:18px;align-items:start}
+.card{background:var(--surface);border:2px solid var(--ink);border-radius:18px;padding:18px}
+.card h2{font-size:17px;font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.list{display:grid;gap:8px}
+.item{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:8px;border:2px solid var(--line);border-radius:14px;cursor:pointer}
+.item:hover{border-color:var(--ink)}
+.item.on{border-color:var(--pink);background:var(--surface-2)}
+.item .th{width:64px;height:48px;border-radius:8px;background:var(--surface-2);overflow:hidden;display:grid;place-items:center;font-size:11px;color:var(--muted)}
+.item .th img,.item .th video{width:100%;height:100%;object-fit:cover}
+.item b{display:block;font-weight:600;line-height:1.3}
+.item small{color:var(--muted);font-size:12.5px}
+.item .ops{display:flex;gap:4px}
+.empty{color:var(--muted);text-align:center;padding:24px;border:2px dashed var(--line);border-radius:14px;font-size:14px}
+label{display:block;font-size:13.5px;color:var(--muted);margin:12px 0 5px}
+label:first-of-type{margin-top:0}
+input[type=text],input[type=month],input[type=number],select,textarea{width:100%;padding:9px 12px;border-radius:12px;border:2px solid var(--line);background:var(--bg)}
+input:focus,textarea:focus{outline:none;border-color:var(--pink)}
+textarea{min-height:70px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tagbox{display:flex;flex-wrap:wrap;gap:8px}
+.tagbox label{margin:0;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid var(--line);border-radius:99px;color:var(--ink);font-size:14px;cursor:pointer}
+.tagbox input{accent-color:var(--pink)}
+.tagbox label:has(input:checked){border-color:var(--ink);background:var(--surface-2)}
+.pick{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px;border:2px dashed var(--line);border-radius:14px}
+.pick small{color:var(--muted);font-size:13px;flex:1;min-width:200px}
+.note{font-size:13.5px;margin-top:8px;line-height:1.6}
+.note.warn{color:var(--warn)}
+.note.ok{color:var(--green)}
+.preview{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.preview img,.preview video{width:56px;height:42px;object-fit:cover;border-radius:6px;border:1.5px solid var(--line);cursor:pointer;background:#000}
+.preview .cover{outline:3px solid var(--pink);outline-offset:1px}
+.preview small{align-self:center;color:var(--muted)}
+.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.help{margin-top:22px;font-size:14px;line-height:1.75;color:var(--muted)}
+.help code{background:var(--surface-2);padding:1px 6px;border-radius:6px;color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,120px);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:99px;font-size:14px;transition:transform .35s}
+.toast.show{transform:translate(-50%,0)}
+[hidden]{display:none!important}
+@media (max-width:820px){.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Event<i>Lab</i>109 · Gallery Editor</h1>
+  <p class="lead">ใช้บนคอมเพื่อสร้าง/แก้ไฟล์ <b>gallery/gallery.json</b> — เปิดไฟล์นี้ตรงจากเครื่องได้เลย ไม่ต้องขึ้นโฮสต์</p>
+
+  <div class="bar">
+    <button class="btn pink" id="reopenBtn" hidden></button>
+    <button class="btn" id="openBtn">เปิด gallery.json</button>
+    <input type="file" id="openFile" accept=".json,application/json" hidden>
+    <button class="btn primary" id="saveBtn">บันทึก gallery.json</button>
+    <button class="btn" id="copyBtn">คัดลอก JSON</button>
+    <button class="btn" id="clearBtn">เริ่มใหม่</button>
+    <span id="status" class="note"></span>
+  </div>
+
+  <div class="cols">
+    <div class="card">
+      <h2>อัลบั้มทั้งหมด <span><button class="btn sm" id="sortBtn" title="เรียงตามเดือน/ปีของงาน ล่าสุดก่อน">เรียงตามวันที่</button> <button class="btn pink sm" id="newBtn">+ เพิ่มงาน</button></span></h2>
+      <p class="note" style="margin:-4px 0 10px;color:var(--muted)">ลำดับในรายการนี้ = ลำดับอัลบั้มบนหน้า Gallery · ปรับด้วยปุ่ม ↑ ↓</p>
+      <div class="list" id="list"></div>
+    </div>
+
+    <form class="card" id="form" autocomplete="off">
+      <h2 id="formTitle">เพิ่มงานใหม่</h2>
+      <div class="pick">
+        <button type="button" class="btn sm" id="pickBtn">เลือกโฟลเดอร์ของงาน</button>
+        <input type="file" id="pickDir" webkitdirectory directory multiple hidden>
+        <small>รองรับรูป jpg / png / webp และคลิป mp4 — บนเว็บจะเรียงตามชื่อไฟล์ (เช่น 01, 02, 10 เรียงแบบตัวเลข) · เพิ่ม/ลบไฟล์ในโฟลเดอร์ทีหลัง ให้เลือกโฟลเดอร์ใหม่อีกครั้ง</small>
+      </div>
+      <div id="pickNote"></div>
+      <div class="preview" id="preview"></div>
+
+      <label for="fTitle" style="margin-top:14px">ชื่องาน (แสดงบนเว็บ)</label>
+      <input type="text" id="fTitle" required placeholder="เช่น งานสัมมนา LOGISTICS GROWTH 2027">
+      <div class="row2">
+        <div><label for="fFolder">ชื่อโฟลเดอร์ใน gallery/</label><input type="text" id="fFolder" required placeholder="เช่น 2026-logistics-growth"></div>
+        <div><label for="fDate">เดือน/ปีของงาน</label><input type="month" id="fDate"></div>
+      </div>
+      <div class="row2">
+        <div><label for="fClient">ลูกค้า/ผู้จัด (ไม่ใส่ก็ได้)</label><input type="text" id="fClient"></div>
+        <div><label for="fCover">ภาพปก</label><select id="fCover"></select></div>
+      </div>
+      <div class="note" id="fileInfo"></div>
+      <label>Tag (เลือกได้หลายอัน)</label>
+      <div class="tagbox" id="tagbox"></div>
+      <label for="fTagX">Tag อื่น ๆ (คั่นด้วย ,)</label>
+      <input type="text" id="fTagX" placeholder="เช่น Photo booth, Rally">
+      <label for="fDesc">คำอธิบายงาน (ไม่ใส่ก็ได้)</label>
+      <textarea id="fDesc"></textarea>
+      <div class="actions">
+        <button class="btn primary" type="submit" id="submitBtn">เพิ่มอัลบั้มนี้</button>
+        <button class="btn" type="button" id="cancelBtn" hidden>ยกเลิกการแก้</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="help">
+    <b>ขั้นตอนเพิ่มงานใหม่</b><br>
+    1. ย่อรูป/คลิปแล้วใส่ในโฟลเดอร์ชื่อภาษาอังกฤษ ไม่มีเว้นวรรค เช่น <code>2026-logistics-growth</code> — ตั้งชื่อไฟล์ให้เรียงตามลำดับที่อยากโชว์ เช่น <code>01.jpg</code>, <code>02.mp4</code>, <code>03.jpg</code><br>
+    2. เปิดหน้านี้ → "เปิด gallery.json" (ครั้งแรกครั้งเดียว) → "+ เพิ่มงาน" → เลือกโฟลเดอร์ → กรอกชื่องาน ติ๊ก tag → "เพิ่มอัลบั้มนี้"<br>
+    3. กด "บันทึก gallery.json" แล้วอัปไฟล์นั้นกับโฟลเดอร์รูปขึ้นโฮสต์ไว้ใน <code>gallery/</code><br>
+    รายการถูกจำไว้ในเบราว์เซอร์อัตโนมัติ ปิดหน้าแล้วเปิดใหม่ก็ยังอยู่ · บน Chrome/Edge กดบันทึกจะเขียนทับไฟล์เดิม ไม่ต้องดาวน์โหลดใหม่
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const TAGS = { registration:"ลงทะเบียน & เช็กอิน", game:"เกมอินเทอร์แอคทีฟ", luckydraw:"ระบบจับรางวัล", engagement:"กิจกรรมเสริมงาน event", kiosk:"KIOSK ให้ข้อมูล", custom:"งาน Customize" };
+const $ = id => document.getElementById(id);
+let albums = [], editing = -1, previews = {};   // previews[folder] = [objectURL…] จากโฟลเดอร์ที่เลือกในรอบนี้
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+const toast = m => { const t = $("toast"); t.textContent = m; t.classList.add("show"); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("show"), 2000); };
+let dirty = false; let setDirty = v => { dirty = v; $("status").textContent = v ? "มีการแก้ไขที่ยังไม่ได้บันทึก" : ""; $("status").className = "note" + (v ? " warn" : ""); };
+addEventListener("beforeunload", e => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+$("tagbox").innerHTML = Object.entries(TAGS).map(([k, v]) => `<label><input type="checkbox" value="${k}">${v}</label>`).join("");
+
+/* ---------- files ---------- */
+const natural = (x, y) => x.localeCompare(y, undefined, { numeric:true, sensitivity:"base" });
+const isVid = f => /\.(mp4|webm|m4v)$/i.test(f);
+const OK_EXT = /\.(jpe?g|png|webp|gif|mp4|webm|m4v)$/i;
+const countText = fs => { const v = fs.filter(isVid).length, p = fs.length - v; return [p ? p + " รูป" : "", v ? v + " คลิป" : ""].filter(Boolean).join(" · ") || "ไม่มีไฟล์"; };
+/* แปลงอัลบั้มรูปแบบเก่า (count + ext + cover เป็นเลข) → files[] */
+function normalize(a){
+  if (!Array.isArray(a.files)) a.files = Array.from({ length:a.count || 0 }, (_, k) => `${k + 1}.${a.ext || "jpg"}`);
+  a.files.sort(natural);
+  if (typeof a.cover === "number") a.cover = a.files[a.cover - 1];
+  delete a.count; delete a.ext;
+  return a;
+}
+let curFiles = [];   // ไฟล์ของอัลบั้มที่กำลังกรอก
+const dateKey = a => a.date || "";
+function insertByDate(a){   // อัลบั้มใหม่ไปอยู่ตามเดือน/ปี (ล่าสุดก่อน)
+  const k = albums.findIndex(x => dateKey(x) < dateKey(a));
+  k < 0 ? albums.push(a) : albums.splice(k, 0, a);
+}
+
+/* ---------- list ---------- */
+function thumbFor(a){
+  const p = previews[a.folder], f = a.cover || a.files.find(x => !isVid(x)) || a.files[0];
+  if (p && p[f]) return isVid(f) ? `<video src="${p[f]}#t=0.1" muted></video>` : `<img src="${p[f]}" alt="">`;
+  return `${a.files.length}`;
+}
+function renderList(){
+  const el = $("list");
+  if (!albums.length) { el.innerHTML = `<div class="empty">ยังไม่มีอัลบั้ม — เปิด gallery.json เดิม หรือกด "+ เพิ่มงาน"</div>`; return; }
+  el.innerHTML = albums.map((a, i) => `<div class="item ${i === editing ? "on" : ""}" data-i="${i}">
+      <div class="th">${thumbFor(a)}</div>
+      <div><b>${esc(a.title)}</b><small>${esc(a.folder)} · ${countText(a.files)}${a.date ? " · " + esc(a.date) : ""}<br>${(a.tags || []).map(t => esc(TAGS[t] || t)).join(", ")}</small></div>
+      <div class="ops">
+        <button class="btn sm" data-op="up" title="เลื่อนขึ้น" ${i ? "" : "disabled"}>↑</button>
+        <button class="btn sm" data-op="down" title="เลื่อนลง" ${i < albums.length - 1 ? "" : "disabled"}>↓</button>
+        <button class="btn sm" data-op="del" title="ลบ">ลบ</button>
+      </div></div>`).join("");
+}
+$("list").onclick = e => {
+  const it = e.target.closest(".item"); if (!it) return;
+  const i = +it.dataset.i, op = e.target.closest("button")?.dataset.op;
+  if (op === "del") { if (confirm(`ลบอัลบั้ม "${albums[i].title}" ออกจากรายการ?\n(ไม่ลบไฟล์ในโฟลเดอร์)`)) { albums.splice(i, 1); if (editing === i) resetForm(); setDirty(true); renderList(); } return; }
+  if (op === "up" || op === "down") { const j = op === "up" ? i - 1 : i + 1; [albums[i], albums[j]] = [albums[j], albums[i]]; if (editing === i) editing = j; else if (editing === j) editing = i; setDirty(true); renderList(); return; }
+  loadForm(i);
+};
+$("sortBtn").onclick = () => {
+  if (!albums.length) return;
+  const ed = albums[editing];
+  albums.sort((x, y) => dateKey(y).localeCompare(dateKey(x)));   // stable: วันที่เท่ากันคงลำดับเดิม
+  editing = ed ? albums.indexOf(ed) : -1; setDirty(true); renderList(); toast("เรียงตามวันที่แล้ว (ล่าสุดก่อน)");
+};
+
+/* ---------- form ---------- */
+function setFiles(fs, cover){
+  curFiles = fs.slice().sort(natural);
+  const def = curFiles.find(f => !isVid(f)) || curFiles[0] || "";
+  $("fCover").innerHTML = curFiles.map(f => `<option value="${esc(f)}">${esc(f)}${isVid(f) ? " (คลิป)" : ""}</option>`).join("");
+  $("fCover").value = curFiles.includes(cover) ? cover : def;
+  $("fileInfo").textContent = curFiles.length ? `ไฟล์ในอัลบั้ม: ${countText(curFiles)} — เรียงตามชื่อไฟล์` : "";
+  drawPreview();
+}
+function resetForm(){
+  editing = -1; $("form").reset(); setFiles([]);
+  $("pickNote").innerHTML = "";
+  $("formTitle").textContent = "เพิ่มงานใหม่"; $("submitBtn").textContent = "เพิ่มอัลบั้มนี้"; $("cancelBtn").hidden = true; renderList();
+}
+function loadForm(i){
+  const a = albums[i]; editing = i;
+  $("fTitle").value = a.title || ""; $("fFolder").value = a.folder || ""; $("fDate").value = a.date || "";
+  $("fClient").value = a.client || ""; $("fDesc").value = a.desc || "";
+  const std = (a.tags || []).filter(t => TAGS[t]), other = (a.tags || []).filter(t => !TAGS[t]);
+  $("tagbox").querySelectorAll("input").forEach(c => c.checked = std.includes(c.value));
+  $("fTagX").value = other.join(", ");
+  $("pickNote").innerHTML = ""; setFiles(a.files, a.cover);
+  $("formTitle").textContent = "แก้อัลบั้ม"; $("submitBtn").textContent = "บันทึกการแก้"; $("cancelBtn").hidden = false;
+  renderList(); $("form").scrollIntoView({ behavior:"smooth", block:"start" });
+}
+$("newBtn").onclick = () => { resetForm(); $("fTitle").focus(); };
+$("cancelBtn").onclick = resetForm;
+$("fCover").onchange = drawPreview;
+function drawPreview(){
+  const p = previews[$("fFolder").value.trim()], cov = $("fCover").value;
+  if (!p) { $("preview").innerHTML = ""; return; }
+  const show = curFiles.slice(0, 30);
+  $("preview").innerHTML = show.map(f => p[f] ? (isVid(f)
+      ? `<video src="${p[f]}#t=0.1" muted preload="metadata" class="${f === cov ? "cover" : ""}" data-f="${esc(f)}" title="${esc(f)}"></video>`
+      : `<img src="${p[f]}" class="${f === cov ? "cover" : ""}" data-f="${esc(f)}" title="${esc(f)}">`) : "").join("")
+    + (curFiles.length > 30 ? `<small>+${curFiles.length - 30}</small>` : "");
+}
+$("preview").onclick = e => { const m = e.target.closest("[data-f]"); if (m) { $("fCover").value = m.dataset.f; drawPreview(); } };   // คลิกภาพเพื่อตั้งเป็นปก
+
+/* เลือกโฟลเดอร์: เก็บรายชื่อไฟล์ทั้งหมด (รูป + mp4) เรียงตามชื่อ */
+$("pickBtn").onclick = () => $("pickDir").click();
+$("pickDir").onchange = e => {
+  const all = [...e.target.files]; if (!all.length) return;
+  const folder = (all[0].webkitRelativePath || "").split("/")[0] || "";
+  const top = all.filter(f => f.webkitRelativePath.split("/").length === 2 && !f.name.startsWith("."));
+  const ok = top.filter(f => OK_EXT.test(f.name)).sort((x, y) => natural(x.name, y.name));
+  const mov = top.filter(f => /\.(mov|avi|mkv|wmv)$/i.test(f.name)).map(f => f.name);
+  const big = ok.filter(f => !isVid(f.name) && f.size > 1.5e6).length, bigV = ok.filter(f => isVid(f.name) && f.size > 40e6).map(f => f.name);
+  const odd = ok.filter(f => /[^\w.\-]/.test(f.name)).map(f => f.name);
+  const msgs = [];
+  if (!ok.length) msgs.push(`<div class="note warn">ไม่พบรูปหรือคลิป mp4 ในโฟลเดอร์ "${esc(folder)}"</div>`);
+  if (mov.length) msgs.push(`<div class="note warn">ไฟล์คลิปที่เว็บเล่นไม่ได้ จะไม่ถูกใส่ในอัลบั้ม: ${mov.slice(0, 5).map(esc).join(", ")} — แปลงเป็น mp4 (H.264) ก่อน</div>`);
+  if (/[^a-z0-9\-_]/i.test(folder)) msgs.push(`<div class="note warn">ชื่อโฟลเดอร์มีภาษาไทย/เว้นวรรค/อักขระพิเศษ แนะนำเปลี่ยนเป็นภาษาอังกฤษ เช่น 2026-event-name (แก้ในช่องชื่อโฟลเดอร์ แล้วเปลี่ยนชื่อโฟลเดอร์จริงให้ตรงกัน)</div>`);
+  if (odd.length) msgs.push(`<div class="note warn">ชื่อไฟล์มีภาษาไทย/เว้นวรรค ${odd.length} ไฟล์ — ใช้ได้ แต่บางโฮสต์อาจเปิดไม่ขึ้น แนะนำชื่อภาษาอังกฤษ/ตัวเลข</div>`);
+  if (big) msgs.push(`<div class="note warn">รูปใหญ่เกิน 1.5MB ${big} รูป — ย่อเพิ่มจะโหลดเร็วขึ้น</div>`);
+  if (bigV.length) msgs.push(`<div class="note warn">คลิปใหญ่เกิน 40MB: ${bigV.slice(0, 3).map(esc).join(", ")} — แนะนำย่อ/ตัดให้สั้นลง</div>`);
+  if (ok.length) msgs.push(`<div class="note ok">พบ ${countText(ok.map(f => f.name))} — เรียงตามชื่อไฟล์แล้ว คลิกภาพด้านล่างเพื่อเลือกปก</div>`);
+  $("pickNote").innerHTML = msgs.join("");
+  if (ok.length) {
+    $("fFolder").value = folder;
+    if (!$("fTitle").value) $("fTitle").value = folder.replace(/^\d{4}-(\d{2}-)?/, "").replace(/[-_]+/g, " ");
+    const dm = folder.match(/^(\d{4})-(\d{2})/); if (dm && !$("fDate").value) $("fDate").value = `${dm[1]}-${dm[2]}`;
+    Object.values(previews[folder] || {}).forEach(URL.revokeObjectURL);
+    previews[folder] = Object.fromEntries(ok.map(f => [f.name, URL.createObjectURL(f)]));
+    setFiles(ok.map(f => f.name), editing >= 0 ? albums[editing].cover : undefined);
+    renderList();
+  }
+  e.target.value = "";
+};
+
+$("form").onsubmit = e => {
+  e.preventDefault();
+  const folder = $("fFolder").value.trim().replace(/^\/+|\/+$/g, "");
+  if (!curFiles.length) { toast("ยังไม่มีไฟล์ — กด \"เลือกโฟลเดอร์ของงาน\" ก่อน"); return; }
+  if (albums.some((a, i) => a.folder === folder && i !== editing)) { toast("มีอัลบั้มที่ใช้โฟลเดอร์นี้แล้ว"); return; }
+  const tags = [...$("tagbox").querySelectorAll("input:checked")].map(c => c.value)
+    .concat($("fTagX").value.split(",").map(s => s.trim()).filter(Boolean));
+  const def = curFiles.find(f => !isVid(f)) || curFiles[0];
+  const a = { folder, title: $("fTitle").value.trim(), date: $("fDate").value || undefined, client: $("fClient").value.trim() || undefined,
+    tags, files: curFiles.slice(), cover: $("fCover").value !== def ? $("fCover").value : undefined, desc: $("fDesc").value.trim() || undefined };
+  if (editing >= 0) albums[editing] = a; else insertByDate(a);
+  toast(editing >= 0 ? "แก้อัลบั้มแล้ว — อย่าลืมกดบันทึก" : "เพิ่มอัลบั้มแล้ว — อย่าลืมกดบันทึก");
+  setDirty(true); resetForm();
+};
+
+/* ---------- open / save ----------
+   1) จำรายการไว้ในเบราว์เซอร์อัตโนมัติ (ปิดหน้าแล้วเปิดใหม่ ข้อมูลยังอยู่)
+   2) Chrome/Edge: บันทึกทับไฟล์ gallery.json เดิมได้ตรง ๆ และจำไฟล์ไว้ใช้ครั้งต่อไป
+   3) เบราว์เซอร์อื่น: ดาวน์โหลดไฟล์ใหม่ (แบบเดิม) */
+const DRAFT_KEY = "el109-gallery-draft";
+const canFS = "showOpenFilePicker" in window && "showSaveFilePicker" in window;
+let fileHandle = null;
+const json = () => JSON.stringify({ updated: new Date().toISOString().slice(0, 10), albums }, null, 2);
+function saveDraft(){ try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ at: Date.now(), dirty, albums })); } catch(e){} }
+const _setDirty = setDirty;
+setDirty = v => { _setDirty(v); saveDraft(); };
+function showStatus(msg, cls){ $("status").textContent = msg; $("status").className = "note" + (cls ? " " + cls : ""); }
+function loadData(text, name){
+  const d = JSON.parse(text); albums = (Array.isArray(d) ? d : (d.albums || [])).map(normalize);
+  resetForm(); setDirty(false); toast(`เปิดแล้ว ${albums.length} อัลบั้ม`);
+  showStatus(`ไฟล์: ${name || "gallery.json"}${fileHandle ? " — กดบันทึกจะเขียนทับไฟล์นี้" : ""}`, "ok");
+}
+
+/* จำ file handle ไว้ใน IndexedDB เพื่อเปิดไฟล์เดิมได้ในคลิกเดียวครั้งต่อไป */
+const idb = (mode, fn) => new Promise((res, rej) => {
+  const r = indexedDB.open("el109-gallery-editor", 1);
+  r.onupgradeneeded = () => r.result.createObjectStore("kv");
+  r.onsuccess = () => { try { const tx = r.result.transaction("kv", mode); const q = fn(tx.objectStore("kv")); tx.oncomplete = () => res(q && q.result); tx.onerror = () => rej(tx.error); } catch (e) { rej(e); } };
+  r.onerror = () => rej(r.error);
+});
+const rememberHandle = h => idb("readwrite", s => s.put(h, "handle")).catch(() => {});
+const recallHandle = () => idb("readonly", s => s.get("handle")).catch(() => null);
+async function permit(h){
+  const o = { mode: "readwrite" };
+  if (await h.queryPermission(o) === "granted") return true;
+  return (await h.requestPermission(o)) === "granted";
+}
+
+$("openBtn").onclick = async () => {
+  if (!canFS) { $("openFile").click(); return; }
+  try {
+    const [h] = await window.showOpenFilePicker({ types: [{ description: "gallery.json", accept: { "application/json": [".json"] } }] });
+    fileHandle = h; await rememberHandle(h);
+    loadData(await (await h.getFile()).text(), h.name); $("reopenBtn").hidden = true;
+  } catch (e) { if (e.name !== "AbortError") toast("เปิดไฟล์ไม่ได้"); }
+};
+$("openFile").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try { loadData(await f.text(), f.name); } catch (err) { toast("ไฟล์นี้ไม่ใช่ gallery.json ที่ถูกต้อง"); }
+  e.target.value = "";
+};
+$("reopenBtn").onclick = async () => {
+  const h = await recallHandle(); if (!h) return;
+  try {
+    if (!await permit(h)) { toast("ไม่ได้รับอนุญาตให้เปิดไฟล์"); return; }
+    fileHandle = h; loadData(await (await h.getFile()).text(), h.name); $("reopenBtn").hidden = true;
+  } catch (e) { toast("หาไฟล์เดิมไม่เจอ — กด \"เปิด gallery.json\" เลือกใหม่"); $("reopenBtn").hidden = true; }
+};
+
+$("saveBtn").onclick = async () => {
+  const text = json() + "\n";
+  if (canFS) {
+    try {
+      if (!fileHandle) {
+        fileHandle = await window.showSaveFilePicker({ suggestedName: "gallery.json", types: [{ description: "gallery.json", accept: { "application/json": [".json"] } }] });
+        await rememberHandle(fileHandle);
+      } else if (!await permit(fileHandle)) { toast("ไม่ได้รับอนุญาตให้บันทึก"); return; }
+      const w = await fileHandle.createWritable(); await w.write(text); await w.close();
+      setDirty(false); showStatus(`บันทึกทับ ${fileHandle.name} แล้ว ${new Date().toLocaleTimeString("th-TH", { hour:"2-digit", minute:"2-digit" })}`, "ok");
+      toast("บันทึกแล้ว — ทำงานต่อได้เลย"); return;
+    } catch (e) { if (e.name === "AbortError") return; fileHandle = null; }   // ผิดพลาด → ใช้วิธีดาวน์โหลดแทน
+  }
+  const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(new Blob([text], { type:"application/json" })), download: "gallery.json" });
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  setDirty(false); toast("ดาวน์โหลด gallery.json แล้ว — รายการยังอยู่ในหน้านี้ ทำงานต่อได้");
+};
+$("copyBtn").onclick = () => navigator.clipboard.writeText(json()).then(() => toast("คัดลอก JSON แล้ว"), () => toast("คัดลอกไม่ได้ — ใช้ปุ่มบันทึกแทน"));
+$("clearBtn").onclick = () => {
+  if (!confirm("ล้างรายการในหน้านี้ แล้วเริ่มใหม่?\n(ไม่ลบไฟล์ gallery.json และไม่ลบรูป)")) return;
+  albums = []; fileHandle = null; resetForm(); setDirty(false); showStatus(""); try { localStorage.removeItem(DRAFT_KEY); } catch(e){}
+};
+
+/* เริ่มต้น: กู้รายการที่ค้างไว้ + เสนอเปิดไฟล์เดิม */
+(async () => {
+  try {
+    const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+    if (d && Array.isArray(d.albums) && d.albums.length) {
+      albums = d.albums.map(normalize); renderList(); _setDirty(!!d.dirty);
+      const when = new Date(d.at).toLocaleString("th-TH", { day:"numeric", month:"short", hour:"2-digit", minute:"2-digit" });
+      showStatus(`กู้รายการล่าสุดแล้ว (${albums.length} อัลบั้ม · ${when})${d.dirty ? " — ยังไม่ได้บันทึกลงไฟล์" : ""}`, d.dirty ? "warn" : "ok");
+    }
+  } catch(e){}
+  if (canFS) { const h = await recallHandle(); if (h) { $("reopenBtn").textContent = `เปิด ${h.name} ล่าสุด`; $("reopenBtn").hidden = false; } }
+  renderList();
+})();
+</script>
+</body>
+</html>

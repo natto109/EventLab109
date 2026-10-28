@@ -1,0 +1,73 @@
+{
+  "updated": "2026-10-28",
+  "albums": [
+    {
+      "folder": "2569-SCB-Growth",
+      "title": "SCB Growth in Logistics 2027",
+      "date": "2026-10",
+      "tags": [
+        "registration"
+      ],
+      "files": [
+        "1.jpg",
+        "2.jpg",
+        "3.jpg",
+        "4.jpg"
+      ],
+      "desc": "ระบบลงทะเบียน งานสัมนา"
+    },
+    {
+      "folder": "2569-BTS-regist",
+      "title": "BTS Group Staff Party",
+      "client": "I in house",
+      "tags": [
+        "registration"
+      ],
+      "files": [
+        "1-4.mp4",
+        "1-5.mp4",
+        "1-6.mp4",
+        "1.jpg",
+        "2.jpg",
+        "3.jpg"
+      ],
+      "desc": "ระบบลงทะเบียนสำหรับพนักงานจำนวน 5,000 คน"
+    },
+    {
+      "folder": "2569-MitsuBC",
+      "title": "งานเปิดศูนย์บริการ Mitsu-BC",
+      "date": "2026-08",
+      "client": "Event Connect",
+      "tags": [
+        "game"
+      ],
+      "desc": "เกมจับคู่",
+      "files": [
+        "1.jpg",
+        "2.jpg",
+        "3.jpg",
+        "4.jpg",
+        "5.jpg"
+      ]
+    },
+    {
+      "folder": "2569-EGAT",
+      "title": "EGAT Interactive information & Game Kiosk",
+      "date": "2026-10",
+      "client": "9Beer",
+      "tags": [
+        "game",
+        "kiosk"
+      ],
+      "files": [
+        "1.jpg",
+        "2.jpg",
+        "3.jpg",
+        "4.jpg",
+        "5.jpg"
+      ],
+      "cover": "2.jpg",
+      "desc": "Touchscreen Information Board และเกมจับคู่\nในงาน “มหกรรมด้านอวกาศแห่งชาติ” ประจำปี 2569 (Thailand Space Expo 2026)\nIcon Siam\nวันที่ 28 - 31 ตุลาคม 2569"
+    }
+  ]
+}

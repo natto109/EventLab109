@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gallery — EventLab109</title>
+<meta name="description" content="ผลงานที่ผ่านมาของ EventLab109">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,700;0,800;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF8F2; --surface:#FFFFFF; --surface-2:#F3EEE4;
+  --ink:#141414; --muted:#666; --line:#E6DFD2;
+  --pink:#E0177A; --pink-soft:#FFE1EF; --green:#2E8F33; --green-soft:#E0F2DC; --shadow:#141414;
+  --ease:cubic-bezier(.2,.9,.25,1.15);
+}
+:root[data-theme="dark"]{
+  --bg:#111411; --surface:#1B201B; --surface-2:#232A23;
+  --ink:#F5F3EE; --muted:#A8B0A5; --line:#2E372E;
+  --pink:#FF4F9E; --pink-soft:#3B1528; --green:#52C458; --green-soft:#183A1C; --shadow:#000;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Kanit',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;transition:background-color .4s,color .4s}
+body.locked{overflow:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+/* header — same as blog */
+header{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:var(--bg);border-bottom:2px solid var(--line)}
+.wm{display:inline-flex;align-items:baseline;font-size:24px;line-height:1;transform:skewX(-6deg)}
+.wm b,.wm i{font-style:italic;font-weight:900}.wm i{color:var(--pink)}
+.wm .n{font-style:italic;font-weight:900;margin-left:4px;padding:2px 7px 3px;background:var(--green);color:#fff;border-radius:6px;font-size:17px;transform:translateY(-2px)}
+.nav{display:flex;gap:4px;align-items:center}
+.links{display:flex;gap:4px}
+.nav a{font-size:15px;font-weight:500;padding:8px 14px;border-radius:99px;transition:background-color .2s}
+.nav a:hover{background:var(--surface-2)}
+.nav a.on{background:var(--ink);color:var(--bg)}
+.menu-btn{display:none}
+.toggle{width:64px;height:34px;border-radius:99px;background:var(--surface);border:2px solid var(--ink);position:relative;box-shadow:3px 3px 0 var(--shadow);margin-left:8px}
+.knob{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--green);display:grid;place-items:center;transition:transform .45s var(--ease)}
+.knob svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+:root[data-theme="dark"] .knob{transform:translateX(30px);background:var(--pink)}
+.moon{display:none}:root[data-theme="dark"] .sun{display:none}:root[data-theme="dark"] .moon{display:block}
+
+/* hero + filters */
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.hero{padding:104px 0 18px}
+.kicker{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:6px;background:var(--ink);color:var(--bg);font-size:12px;letter-spacing:.16em;font-weight:500;transform:skewX(-8deg)}
+.kicker i{width:7px;height:7px;border-radius:50%;background:var(--pink)}
+h1{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:14px}
+h1 b{font-size:clamp(40px,6.4vw,76px);font-style:italic;font-weight:900;line-height:1;letter-spacing:-.01em}
+h1 span{font-size:clamp(17px,2vw,22px);font-weight:500;color:var(--pink)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;border:2px solid var(--ink);background:var(--surface);font-size:14.5px;font-weight:500;transition:transform .2s var(--ease),background-color .2s,color .2s}
+.chip small{font-size:12px;padding:1px 7px;border-radius:99px;background:var(--surface-2);color:var(--muted)}
+.chip:hover{transform:translateY(-2px)}
+.chip.on{background:var(--ink);color:var(--bg)}
+.chip.on small{background:var(--pink);color:#fff}
+
+/* album grid */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px 26px;padding-bottom:40px}
+.album{display:block;text-align:left;width:100%}
+.stack{position:relative;aspect-ratio:4/3;margin:8px 8px 0 0}
+.stack .ph{position:absolute;inset:0;border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;background:var(--surface-2);transition:transform .5s var(--ease)}
+.stack .ph img,.stack .ph video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.92);border:2px solid #141414;display:grid;place-items:center;pointer-events:none;z-index:2}
+.play svg{width:20px;height:20px;fill:#141414;margin-left:3px}
+.stack .p3{transform:rotate(0deg)}
+.stack .p2{transform:rotate(0deg)}
+.stack .p1{box-shadow:6px 6px 0 var(--c,var(--pink));transition:transform .5s var(--ease),box-shadow .3s}
+.stack .p1 img,.stack .p1 video{transition:transform .6s var(--ease)}
+.album:hover .p3,.album:focus-visible .p3{transform:translate(18px,-10px) rotate(7deg)}
+.album:hover .p2,.album:focus-visible .p2{transform:translate(8px,-5px) rotate(3deg)}
+.album:hover .p1,.album:focus-visible .p1{transform:translate(-4px,-4px) rotate(-2deg);box-shadow:10px 10px 0 var(--c,var(--pink))}
+.album:hover .p1 img,.album:hover .p1 video{transform:scale(1.06)}
+.album:focus-visible{outline:none}
+.cnt{position:absolute;right:12px;bottom:12px;z-index:3;padding:4px 10px;border-radius:99px;background:rgba(20,20,20,.78);color:#fff;font-size:12.5px;font-weight:500}
+.album h3{font-size:19px;font-weight:700;line-height:1.3;margin-top:16px}
+.album .meta{font-size:13.5px;color:var(--muted);margin-top:2px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{font-size:12px;font-weight:700;font-style:italic;letter-spacing:.04em;padding:3px 9px;border-radius:6px;background:var(--tc-soft,var(--surface-2));color:var(--tc,var(--ink))}
+.empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);border:2px dashed var(--line);border-radius:20px}
+
+/* album view */
+.view{position:fixed;inset:0;z-index:60;background:var(--bg);overflow-y:auto;opacity:0;visibility:hidden;transform:translateY(30px);transition:opacity .3s,transform .45s var(--ease),visibility 0s .45s}
+.view.show{opacity:1;visibility:visible;transform:none;transition:opacity .3s,transform .45s var(--ease)}
+.vbar{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;padding:12px 20px;background:var(--bg);border-bottom:2px solid var(--line)}
+.vbar .close{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:99px;border:2px solid var(--ink);background:var(--surface);font-size:14.5px;font-weight:500}
+.vbar .close svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.vbar .t{font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vhead{max-width:1240px;margin:0 auto;padding:26px 20px 8px}
+.vhead h2{font-size:clamp(28px,4vw,44px);font-weight:800;line-height:1.2}
+.vhead .meta{color:var(--muted);margin-top:4px}
+.vhead p{margin-top:10px;max-width:720px;line-height:1.7;font-size:16.5px}
+.photos{max-width:1240px;margin:0 auto;padding:18px 20px 60px;columns:3 300px;column-gap:14px}
+.photos button{display:block;width:100%;margin:0 0 14px;break-inside:avoid;border-radius:14px;overflow:hidden;border:2px solid var(--ink);background:var(--surface-2);cursor:zoom-in;
+  opacity:0;transform:translateY(16px);animation:pIn .5s var(--ease) forwards}
+.photos button{position:relative}
+.photos img,.photos video{width:100%;display:block;transition:transform .4s var(--ease)}
+.photos video{aspect-ratio:16/9;object-fit:cover;pointer-events:none}
+.photos button:hover img,.photos button:hover video{transform:scale(1.04)}
+@keyframes pIn{to{opacity:1;transform:none}}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:80;background:rgba(12,12,12,.94);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s,visibility 0s .25s;touch-action:pan-y}
+.lb.show{opacity:1;visibility:visible;transition:opacity .25s}
+.lb img,.lb video{max-width:min(94vw,1400px);max-height:84vh;background:#000;border-radius:10px;transition:transform .3s var(--ease),opacity .2s;user-select:none;-webkit-user-drag:none}
+.lb .btn{position:absolute;width:52px;height:52px;border-radius:50%;background:#fff;color:#141414;display:grid;place-items:center}
+.lb .btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.lb .prev{left:20px}.lb .next{right:20px}.lb .x{top:16px;right:16px;width:44px;height:44px}
+.lb .num{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:#fff;font-size:14px;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.14)}
+
+footer{text-align:center;padding:30px 16px 40px;font-size:13.5px;color:var(--muted)}
+footer b{color:var(--ink)}
+
+@media (max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:820px){
+  header{padding:10px 12px}
+  .wm{font-size:19px}.wm .n{font-size:13px}
+  .menu-btn{display:grid;place-items:center;width:40px;height:34px;border:2px solid var(--ink);border-radius:10px;background:var(--surface)}
+  .menu-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+  .links{display:none;position:absolute;top:calc(100% + 8px);right:12px;flex-direction:column;min-width:180px;padding:8px;background:var(--surface);border:2px solid var(--ink);border-radius:16px;box-shadow:4px 4px 0 var(--shadow)}
+  .nav.open .links{display:flex}
+  .nav .links a{font-size:16px;padding:10px 14px;border-radius:10px}
+  .toggle{width:54px;height:30px;margin-left:6px}.knob{width:20px;height:20px}
+  :root[data-theme="dark"] .knob{transform:translateX(24px)}
+  .hero{padding-top:84px}
+  .filters{flex-wrap:nowrap;overflow-x:auto;margin:18px -20px 22px;padding:0 20px 6px;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .chip{flex:none}
+  .grid{gap:24px 16px}
+  .lb .prev,.lb .next{display:none}
+}
+@media (max-width:560px){.grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.photos button{opacity:1;transform:none}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <a class="wm home" href="index.html" aria-label="EventLab109 หน้าแรก"><b>Event</b><i>Lab</i><span class="n">109</span></a>
+  <nav class="nav" id="nav">
+    <div class="links">
+      <a class="keepv" href="blog.html">Blog</a>
+      <a class="on keepv" href="gallery.html">Gallery</a>
+      <a class="home" data-hash="#services" href="index.html#services">Service</a>
+      <a class="home" data-hash="#contact" href="index.html#contact">Contact</a>
+    </div>
+    <button class="menu-btn" id="menuBtn" aria-label="เมนู" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <button class="toggle" id="themeBtn" aria-label="สลับโหมดสว่าง/มืด"><span class="knob">
+      <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span></button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker"><i></i>EVENTLAB109 GALLERY</span>
+    <h1><b>GALLERY</b><span>ผลงานที่ผ่านมา</span></h1>
+  </section>
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="grid"></div>
+</main>
+<footer>© 2015 <b>EventLab109</b> · Interactive Event Technology</footer>
+
+<section class="view" id="view" aria-hidden="true">
+  <div class="vbar">
+    <button class="close" id="vClose"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>อัลบั้มทั้งหมด</button>
+    <span class="t" id="vBarTitle"></span>
+  </div>
+  <div class="vhead" id="vHead"></div>
+  <div class="photos" id="photos"></div>
+</section>
+
+<div class="lb" id="lb" role="dialog" aria-label="ดูภาพใหญ่">
+  <img id="lbImg" alt="">
+  <video id="lbVid" controls playsinline hidden></video>
+  <button class="btn prev" id="lbPrev" aria-label="ภาพก่อนหน้า"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+  <button class="btn next" id="lbNext" aria-label="ภาพถัดไป"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+  <button class="btn x" id="lbClose" aria-label="ปิด"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  <span class="num" id="lbNum"></span>
+</div>
+
+<script>
+/* ============ ตั้งค่า ============ */
+const GALLERY_DIR = "gallery/";              // โฟลเดอร์เก็บอัลบั้ม: gallery/<folder>/1.jpg, 2.jpg, ...
+const LIST_FILE   = GALLERY_DIR + "gallery.json";
+// tag มาตรฐาน = 6 service ของเว็บ (tag อื่นที่ไม่อยู่ในนี้ก็ใช้ได้ จะแสดงตามที่พิมพ์)
+const TAGS = {
+  registration: { th:"ลงทะเบียน & เช็กอิน", c:"pink" },
+  game:         { th:"เกมอินเทอร์แอคทีฟ", c:"green" },
+  luckydraw:    { th:"ระบบจับรางวัล", c:"pink" },
+  engagement:   { th:"กิจกรรมเสริมงาน event", c:"green" },
+  kiosk:        { th:"KIOSK ให้ข้อมูล", c:"pink" },
+  custom:       { th:"งาน Customize", c:"green" }
+};
+const TH_M = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+
+/* ============ ลิงก์กลับหน้าแรก / ธีม / เมนูมือถือ ============ */
+const V2 = new URLSearchParams(location.search).get("v") === "2";
+const HOME = V2 ? "index-v2.html" : "index.html";
+document.querySelectorAll("a.home").forEach(a => a.href = HOME + (a.dataset.hash || ""));
+document.querySelectorAll("a.keepv").forEach(a => a.href = a.getAttribute("href").split("?")[0] + (V2 ? "?v=2" : ""));
+const root = document.documentElement, THEME_KEY = V2 ? "el109-theme" : "el-theme";
+try { const t = localStorage.getItem(THEME_KEY); if (t) root.dataset.theme = t; } catch(e){}
+document.getElementById("themeBtn").onclick = () => {
+  root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+  try { localStorage.setItem(THEME_KEY, root.dataset.theme); } catch(e){}
+};
+const nav = document.getElementById("nav"), menuBtn = document.getElementById("menuBtn");
+menuBtn.onclick = e => { e.stopPropagation(); const o = nav.classList.toggle("open"); menuBtn.setAttribute("aria-expanded", o); };
+document.addEventListener("click", e => { if (!nav.contains(e.target)) nav.classList.remove("open"); });
+
+/* ============ โหลดรายการอัลบั้ม ============ */
+let albums = [], filter = new URLSearchParams(location.search).get("tag") || "all";   // ?tag=game → เปิดมาแล้วกรองให้เลย
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+const tagInfo = t => TAGS[t] || { th:t, c:null };
+const tagHTML = t => { const i = tagInfo(t); return `<span class="tag" ${i.c ? `style="--tc:var(--${i.c});--tc-soft:var(--${i.c}-soft)"` : ""}>${esc(i.th)}</span>`; };
+const dateTH = d => { if (!d) return ""; const [y, m] = String(d).split("-").map(Number); return (m ? TH_M[m-1] + " " : "") + (y + 543); };
+/* ไฟล์ในอัลบั้ม: รูป + คลิป mp4 เรียงตามชื่อไฟล์ (1, 2, 10 เรียงแบบตัวเลข) */
+const natural = (x, y) => x.localeCompare(y, undefined, { numeric:true, sensitivity:"base" });
+const isVid = f => /\.(mp4|webm|m4v)$/i.test(f);
+const filesOf = a => a._files || (a._files = (Array.isArray(a.files) ? a.files.slice()
+  : Array.from({ length:a.count || 0 }, (_, k) => `${k + 1}.${a.ext || "jpg"}`)).sort(natural));
+const url = (a, f) => `${GALLERY_DIR}${encodeURIComponent(a.folder)}/${encodeURIComponent(f)}`;
+const PLAY = `<span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>`;
+const media = (a, f, alt, lazy) => isVid(f)
+  ? `<video src="${url(a, f)}#t=0.1" muted playsinline preload="metadata" aria-label="${esc(alt)}"></video>${PLAY}`
+  : `<img src="${url(a, f)}" alt="${esc(alt)}" loading="${lazy ? "lazy" : "eager"}">`;
+const countText = a => { const fs = filesOf(a), v = fs.filter(isVid).length, p = fs.length - v;
+  return [p ? p + " รูป" : "", v ? v + " คลิป" : ""].filter(Boolean).join(" · "); };
+function coverOf(a){
+  const fs = filesOf(a);
+  if (typeof a.cover === "string" && fs.includes(a.cover)) return a.cover;
+  if (typeof a.cover === "number" && fs[a.cover - 1]) return fs[a.cover - 1];      // รูปแบบเก่า (เลขรูป)
+  return fs.find(f => !isVid(f)) || fs[0];                                         // ไม่ตั้งปก → รูปแรก
+}
+
+fetch(LIST_FILE, { cache:"no-cache" }).then(r => { if (!r.ok) throw 0; return r.json(); })
+  .then(d => {
+    albums = (d.albums || []).filter(a => a.folder && filesOf(a).length);   // ลำดับอัลบั้ม = ลำดับใน gallery.json (จัดใน gallery-editor)
+    renderFilters(); renderGrid(); openFromHash();
+  })
+  .catch(() => { document.getElementById("grid").innerHTML = `<div class="empty">ยังโหลดรายการอัลบั้มไม่ได้ — ตรวจว่ามีไฟล์ ${LIST_FILE} และเปิดผ่านโฮสต์ (ไม่ใช่เปิดไฟล์ตรงจากเครื่อง)</div>`; });
+
+function renderFilters(){
+  const counts = {};
+  albums.forEach(a => (a.tags || []).forEach(t => counts[t] = (counts[t] || 0) + 1));
+  if (filter !== "all" && !counts[filter]) counts[filter] = 0;   // tag ที่ยังไม่มีงาน ก็ยังโชว์ว่ากำลังกรองอะไร
+  const order = [...Object.keys(TAGS).filter(t => t in counts), ...Object.keys(counts).filter(t => !TAGS[t])];
+  const el = document.getElementById("filters");
+  el.innerHTML = `<button class="chip ${filter === "all" ? "on" : ""}" data-t="all">ทั้งหมด <small>${albums.length}</small></button>` +
+    order.map(t => `<button class="chip ${filter === t ? "on" : ""}" data-t="${esc(t)}">${esc(tagInfo(t).th)} <small>${counts[t]}</small></button>`).join("");
+  el.onclick = e => { const b = e.target.closest(".chip"); if (!b) return; filter = b.dataset.t;
+    const q = new URLSearchParams(location.search); filter === "all" ? q.delete("tag") : q.set("tag", filter);
+    history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "") + location.hash);
+    renderFilters(); renderGrid(); };
+}
+function renderGrid(){
+  const list = albums.filter(a => filter === "all" || (a.tags || []).includes(filter));
+  const g = document.getElementById("grid");
+  if (!list.length) { g.innerHTML = `<div class="empty">ยังไม่มีอัลบั้มในหมวดนี้</div>`; return; }
+  g.innerHTML = list.map((a, i) => {
+    const c = tagInfo((a.tags || [])[0]).c || "pink";
+    const cov = coverOf(a), rest = filesOf(a).filter(f => f !== cov);
+    const f2 = rest[0] || cov, f3 = rest[1] || f2;
+    return `<button class="album" data-f="${esc(a.folder)}" style="--c:var(--${c})">
+      <div class="stack">
+        <div class="ph p3">${media(a, f3, "", true)}</div>
+        <div class="ph p2">${media(a, f2, "", true)}</div>
+        <div class="ph p1">${media(a, cov, a.title, i >= 6)}<span class="cnt">${countText(a)}</span></div>
+      </div>
+      <h3>${esc(a.title)}</h3>
+      <div class="meta">${[dateTH(a.date), esc(a.client)].filter(Boolean).join(" · ")}</div>
+      <div class="tags">${(a.tags || []).map(tagHTML).join("")}</div>
+    </button>`;
+  }).join("");
+  g.onclick = e => { const b = e.target.closest(".album"); if (b) location.hash = "album=" + encodeURIComponent(b.dataset.f); };
+}
+
+/* ============ หน้าอัลบั้ม (ใช้ #album=<folder> แชร์ลิงก์ได้ กด back ได้) ============ */
+const view = document.getElementById("view");
+let cur = null;
+function openFromHash(){
+  const m = location.hash.match(/^#album=(.+)$/);
+  const a = m && albums.find(x => x.folder === decodeURIComponent(m[1]));
+  if (!a) { closeView(); return; }
+  cur = a;
+  document.getElementById("vBarTitle").textContent = a.title;
+  document.getElementById("vHead").innerHTML = `<h2>${esc(a.title)}</h2>
+    <div class="meta">${[dateTH(a.date), esc(a.client), countText(a)].filter(Boolean).join(" · ")}</div>
+    <div class="tags">${(a.tags || []).map(tagHTML).join("")}</div>${a.desc ? `<p>${esc(a.desc)}</p>` : ""}`;
+  document.getElementById("photos").innerHTML = filesOf(a).map((f, k) =>
+    `<button data-i="${k}" class="${isVid(f) ? "vid" : ""}" style="animation-delay:${Math.min(k, 12) * 40}ms">${media(a, f, `${a.title} ${k + 1}`, k >= 6)}</button>`).join("");
+  view.classList.add("show"); view.setAttribute("aria-hidden", "false"); view.scrollTop = 0;
+  document.body.classList.add("locked");
+}
+function closeView(){ view.classList.remove("show"); view.setAttribute("aria-hidden", "true"); document.body.classList.remove("locked"); cur = null; closeLb(); }
+addEventListener("hashchange", openFromHash);
+document.getElementById("vClose").onclick = () => { history.replaceState(null, "", location.pathname + location.search); closeView(); };
+document.getElementById("photos").onclick = e => { const b = e.target.closest("button[data-i]"); if (b) openLb(+b.dataset.i); };
+
+/* ============ ดูภาพใหญ่ / เล่นคลิป ============ */
+const lb = document.getElementById("lb"), lbImg = document.getElementById("lbImg"), lbVid = document.getElementById("lbVid");
+let li = 0;
+function openLb(i){ li = i; showLb(0); lb.classList.add("show"); }
+function closeLb(){ lb.classList.remove("show"); lbVid.pause(); }
+function showLb(dir){
+  if (!cur) return;
+  const fs = filesOf(cur), n = fs.length;
+  li = (li + n) % n;
+  const f = fs[li];
+  lbVid.pause();
+  if (isVid(f)) {
+    lbImg.hidden = true; lbVid.hidden = false;
+    lbVid.src = url(cur, f); lbVid.play().catch(() => {});
+  } else {
+    lbVid.hidden = true; lbVid.removeAttribute("src"); lbVid.load(); lbImg.hidden = false;
+    lbImg.style.opacity = 0; lbImg.style.transform = `translateX(${dir * 40}px)`;
+    const im = new Image(); im.onload = im.onerror = () => { lbImg.src = im.src; lbImg.style.opacity = 1; lbImg.style.transform = "none"; };
+    im.src = url(cur, f);
+  }
+  document.getElementById("lbNum").textContent = `${li + 1} / ${n}`;
+  [li + 1, li - 1].forEach(k => { const g = fs[k]; if (g && !isVid(g)) new Image().src = url(cur, g); });   // โหลดรูปข้าง ๆ รอไว้
+}
+document.getElementById("lbPrev").onclick = e => { e.stopPropagation(); li--; showLb(-1); };
+document.getElementById("lbNext").onclick = e => { e.stopPropagation(); li++; showLb(1); };
+document.getElementById("lbClose").onclick = closeLb;
+lb.onclick = e => { if (e.target === lb) closeLb(); };
+addEventListener("keydown", e => {
+  if (lb.classList.contains("show")) {
+    if (e.key === "ArrowLeft") { li--; showLb(-1); }
+    if (e.key === "ArrowRight") { li++; showLb(1); }
+    if (e.key === "Escape") closeLb();
+  } else if (e.key === "Escape" && cur) document.getElementById("vClose").click();
+});
+let sx = null;   // ปัดซ้าย-ขวาบนมือถือ (ไม่นับตอนลากแถบเวลาของคลิป)
+lb.addEventListener("touchstart", e => { sx = e.target === lbVid ? null : e.touches[0].clientX; }, { passive:true });
+lb.addEventListener("touchend", e => {
+  if (sx === null) return; const dx = e.changedTouches[0].clientX - sx; sx = null;
+  if (Math.abs(dx) > 40) { li += dx < 0 ? 1 : -1; showLb(dx < 0 ? 1 : -1); }
+});
+</script>
+<script type="module" src="counter.js" data-site="gallery"></script>
+</body>
+</html>
